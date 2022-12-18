@@ -8,7 +8,6 @@ import Paginator from '../../components/Paginator/Paginator';
 import Loader from '../../components/Loader/Loader';
 import ErrorHandler from '../../components/ErrorHandler/ErrorHandler';
 import './Feed.css';
-import post from '../../components/Feed/Post/Post';
 
 class Feed extends Component {
   state = {
@@ -60,11 +59,11 @@ class Feed extends Component {
       })
       .then(resData => {
         this.setState({
-          posts: resData.posts.map(psot => {
+          posts: resData.posts.map(post => {
             return {
               ...post,
               imagePath: post.imageUrl
-            }
+            };
           }),
           totalPosts: resData.totalItems,
           postsLoading: false
@@ -111,28 +110,19 @@ class Feed extends Component {
     this.setState({
       editLoading: true
     });
-    // Set up data (with image!)
-
     const formData = new FormData();
     formData.append('title', postData.title);
     formData.append('content', postData.content);
     formData.append('image', postData.image);
-
     let url = 'http://localhost:8080/feed/post';
     let method = 'POST';
     if (this.state.editPost) {
-      url = 'URL';
+      url = 'http://localhost:8080/feed/post/' + this.state.editPost._id;
+      method = 'PUT';
     }
 
     fetch(url, {
       method: method,
-      // headers: {
-      //   'content-type': 'application/json'
-      // },
-      // body: JSON.stringify({
-      //   title: postData.title,
-      //   content: postData.content
-      // })
       body: formData
     })
       .then(res => {
@@ -142,6 +132,7 @@ class Feed extends Component {
         return res.json();
       })
       .then(resData => {
+        console.log(resData);
         const post = {
           _id: resData.post._id,
           title: resData.post.title,
